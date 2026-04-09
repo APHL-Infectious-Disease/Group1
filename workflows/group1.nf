@@ -23,11 +23,11 @@ workflow GROUP1 {
     
     ch_versions = channel.empty()
 
-    // ENTREZDIRECT_ESEARCH(
-    //     tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
-    //     ),
-    //     "sra"
-    // )
+    ENTREZDIRECT_ESEARCH(
+        tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
+        ),
+        "sra"
+    )
 
     SRA_META(
         true

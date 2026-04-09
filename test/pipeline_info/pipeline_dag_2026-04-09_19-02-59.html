@@ -36,25 +36,43 @@
 flowchart TB
     subgraph " "
     v2["Channel.fromList"]
-    v8["database"]
+    v9[" "]
+    v10["database"]
+    v14["run"]
+    v19[" "]
+    v29["Channel.of"]
+    end
+    subgraph " "
+    v7["ch_samplesheet"]
+    v12[" "]
+    v13[" "]
+    v16["ch_meta"]
+    v17["ch_xml"]
+    v33["ch_collated_versions"]
     end
     subgraph "APHLINFECTIOUSDISEASE_GROUP1 [APHLINFECTIOUSDISEASE_GROUP1]"
     subgraph "APHLINFECTIOUSDISEASE_GROUP1:GROUP1 [GROUP1]"
-    v9(["ENTREZDIRECT_ESEARCH"])
+    v11(["ENTREZDIRECT_ESEARCH"])
+    v15(["SRA_META"])
+    v18(( ))
     end
-    end
-    subgraph " "
-    v10[" "]
-    v11[" "]
     end
     subgraph "PIPELINE_INITIALISATION [PIPELINE_INITIALISATION]"
     v3(( ))
     end
     v2 --> v3
-    v8 --> v9
-    v3 --> v9
+    v3 --> v7
     v9 --> v11
-    v9 --> v10
+    v10 --> v11
+    v11 --> v13
+    v11 --> v12
+    v14 --> v15
+    v15 --> v17
+    v15 --> v16
+    v15 --> v18
+    v19 --> v18
+    v29 --> v18
+    v18 --> v33
 
 </pre>
 <script type="module">

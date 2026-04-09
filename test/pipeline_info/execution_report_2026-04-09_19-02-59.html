@@ -18,11 +18,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Nextflow workflow report for run id [ecstatic_gates]">
+  <meta name="description" content="Nextflow workflow report for run id [stoic_darwin]">
   <meta name="author" content="Paolo Di Tommaso, Phil Ewels">
   <link rel="icon" type="image/png" href="https://www.nextflow.io/img/favicon.png" />
 
-  <title>[ecstatic_gates] Nextflow Workflow Report</title>
+  <title>[stoic_darwin] Nextflow Workflow Report</title>
 
   <style type="text/css">
   /*!
@@ -137,7 +137,7 @@ table.DTCR_clonedTable.dataTable{position:absolute !important;background-color:r
         <li class="nav-item"><a class="nav-link" href="#tasks">Tasks</a></li>
       </ul>
       <span class="navbar-text">
-        [ecstatic_gates]
+        [stoic_darwin]
       </span>
     </div>
   </nav>
@@ -146,7 +146,7 @@ table.DTCR_clonedTable.dataTable{position:absolute !important;background-color:r
     <div class="container">
 
       <h1 class="display-3">Nextflow workflow report</h1>
-      <h2 class="text-muted mb-4"><samp>[ecstatic_gates]</samp> </h2>
+      <h2 class="text-muted mb-4"><samp>[stoic_darwin]</samp> </h2>
 
       
           <div class="alert alert-danger mb-4">
@@ -162,8 +162,6 @@ Caused by:
 Command executed:
 
   bash /workspaces/Group1/modules/local/sra_meta_pull/sra_meta_pull.sh
-  head sra_meta.tsv
-  echo "SRA pull complete"
 
 Command exit status:
   1
@@ -173,32 +171,32 @@ Command output:
 
 Command error:
   curl: (35) OpenSSL/3.0.18: error:0A00006E:SSL routines::bad extension
-   ERROR:  curl command failed ( Thu Apr  9 06:37:47 PM UTC 2026 ) with: 35
+   ERROR:  curl command failed ( Thu Apr  9 07:03:22 PM UTC 2026 ) with: 35
   -X POST https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi -d retmax=0&usehistory=y&db=sra&term=WGS%5BStrategy%5D%20AND%20USA%20AND%20Wastewater%20AND%20Metagenome&tool=edirect&edirect=24.0&edirect_os=Linux
-   WARNING:  FAILURE ( Thu Apr  9 06:37:47 PM UTC 2026 )
+   WARNING:  FAILURE ( Thu Apr  9 07:03:21 PM UTC 2026 )
   nquire -url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/ esearch.fcgi -retmax 0 -usehistory y -db sra -term "WGS[Strategy] AND USA AND Wastewater AND Metagenome" -tool edirect -edirect 24.0 -edirect_os Linux
   EMPTY RESULT
   SECOND ATTEMPT
   curl: (35) OpenSSL/3.0.18: error:0A00006E:SSL routines::bad extension
-   ERROR:  curl command failed ( Thu Apr  9 06:37:49 PM UTC 2026 ) with: 35
+   ERROR:  curl command failed ( Thu Apr  9 07:03:23 PM UTC 2026 ) with: 35
   -X POST https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi -d retmax=0&usehistory=y&db=sra&term=WGS%5BStrategy%5D%20AND%20USA%20AND%20Wastewater%20AND%20Metagenome&tool=edirect&edirect=24.0&edirect_os=Linux
-   WARNING:  FAILURE ( Thu Apr  9 06:37:48 PM UTC 2026 )
+   WARNING:  FAILURE ( Thu Apr  9 07:03:23 PM UTC 2026 )
   nquire -url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/ esearch.fcgi -retmax 0 -usehistory y -db sra -term "WGS[Strategy] AND USA AND Wastewater AND Metagenome" -tool edirect -edirect 24.0 -edirect_os Linux
   EMPTY RESULT
   LAST ATTEMPT
   curl: (35) OpenSSL/3.0.18: error:0A00006E:SSL routines::bad extension
-   ERROR:  curl command failed ( Thu Apr  9 06:37:50 PM UTC 2026 ) with: 35
+   ERROR:  curl command failed ( Thu Apr  9 07:03:25 PM UTC 2026 ) with: 35
   -X POST https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi -d retmax=0&usehistory=y&db=sra&term=WGS%5BStrategy%5D%20AND%20USA%20AND%20Wastewater%20AND%20Metagenome&tool=edirect&edirect=24.0&edirect_os=Linux
-   ERROR:  FAILURE ( Thu Apr  9 06:37:50 PM UTC 2026 )
+   ERROR:  FAILURE ( Thu Apr  9 07:03:25 PM UTC 2026 )
   nquire -url https://eutils.ncbi.nlm.nih.gov/entrez/eutils/ esearch.fcgi -retmax 0 -usehistory y -db sra -term "WGS[Strategy] AND USA AND Wastewater AND Metagenome" -tool edirect -edirect 24.0 -edirect_os Linux
   EMPTY RESULT
   QUERY FAILURE
   curl: (35) OpenSSL/3.0.18: error:0A00006E:SSL routines::bad extension
-   ERROR:  curl command failed ( Thu Apr  9 06:37:52 PM UTC 2026 ) with: 35
+   ERROR:  curl command failed ( Thu Apr  9 07:03:27 PM UTC 2026 ) with: 35
   -X POST https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi -d retmax=0&usehistory=y&db=sra&term=WGS%5BStrategy%5D%20AND%20USA%20AND%20Wastewater%20AND%20Metagenome&tool=edirect&edirect=24.0&edirect_os=Linux
 
 Work dir:
-  /workspaces/Group1/work/65/a74545bf9aa3f04a188cd291c3f1dd
+  /workspaces/Group1/work/6b/3f96acfc20bc803180a427976060a4
 
 Tip: view the complete command output by changing to the process work dir and entering the command `cat .command.out`</pre>
           </div>
@@ -207,16 +205,16 @@ Tip: view the complete command output by changing to the process work dir and en
       <dl>
         <dt>Run times</dt>
         <dd>
-          <span id="workflow_start">09-Apr-2026 18:37:41</span> - <span id="workflow_complete">09-Apr-2026 18:37:52</span>
-          (<span id="completed_fromnow"></span>duration: <strong>11.2s</strong>)
+          <span id="workflow_start">09-Apr-2026 19:03:01</span> - <span id="workflow_complete">09-Apr-2026 19:03:27</span>
+          (<span id="completed_fromnow"></span>duration: <strong>26.3s</strong>)
         </dd>
 
         <dl>
           <div class="progress" style="height: 1.6rem; margin: 1.2rem auto; border-radius: 0.20rem;">
-            <div style="width: 0.0%" class="progress-bar bg-success" data-toggle="tooltip" data-placement="top" title="0 tasks succeeded"><span class="text-truncate">&nbsp; 0 succeeded &nbsp;</span></div>
+            <div style="width: 50.0%" class="progress-bar bg-success" data-toggle="tooltip" data-placement="top" title="1 tasks succeeded"><span class="text-truncate">&nbsp; 1 succeeded &nbsp;</span></div>
             <div style="width: 0.0%" class="progress-bar bg-secondary" data-toggle="tooltip" data-placement="top" title="0 tasks were cached"><span class="text-truncate">&nbsp; 0 cached &nbsp;</span></div>
             <div style="width: 0.0%" class="progress-bar bg-warning" data-toggle="tooltip" data-placement="top" title="0 tasks failed and were ignored"><span class="text-truncate">&nbsp; 0 ignored &nbsp;</span></div>
-            <div style="width: 100.0%" class="progress-bar bg-danger" data-toggle="tooltip" data-placement="top" title="1 tasks failed"><span class="text-truncate">&nbsp; 1 failed (0 retries) &nbsp;</span></div>
+            <div style="width: 50.0%" class="progress-bar bg-danger" data-toggle="tooltip" data-placement="top" title="1 tasks failed"><span class="text-truncate">&nbsp; 1 failed (0 retries) &nbsp;</span></div>
           </div>
         </dl>
 
@@ -248,7 +246,7 @@ Tip: view the complete command output by changing to the process work dir and en
         
 
         <dt class="col-sm-3">Workflow session</dt>
-        <dd class="col-sm-9"><code>4fe61f12-131c-42fc-8429-dadf2b52896f</code></dd>
+        <dd class="col-sm-9"><code>e6624d91-62a0-473e-b8d1-598e3ccc3aaf</code></dd>
 
         
 
@@ -1082,7 +1080,7 @@ $(function() {
 
   // Nextflow report data
   window.data = { "trace":[
-{"task_id":"1","hash":"65\/a74545","native_id":"52588","process":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META","module":"-","container":"quay.io\/biocontainers\/entrez-direct:16.2--he881be0_1","tag":"Gathering SRA Runs","name":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","status":"FAILED","exit":"1","submit":"1775759865525","start":"1775759865559","complete":"1775759872461","duration":"6936","realtime":"6902","%cpu":"-","%mem":"-","rss":"-","vmem":"-","peak_rss":"-","peak_vmem":"-","rchar":"-","wchar":"-","syscr":"-","syscw":"-","read_bytes":"-","write_bytes":"-","attempt":"1","workdir":"\/workspaces\/Group1\/work\/65\/a74545bf9aa3f04a188cd291c3f1dd","script":"\n\n    bash \/workspaces\/Group1\/modules\/local\/sra_meta_pull\/sra_meta_pull.sh\n    head sra_meta.tsv\n    echo \"SRA pull complete\"\n    ","scratch":"-","queue":"-","cpus":"1","memory":"6442450944","disk":"-","time":"14400000","env":"PYTHONNOUSERSITE=1\nR_PROFILE_USER=\/.Rprofile\nR_ENVIRON_USER=\/.Renviron\nJULIA_DEPOT_PATH=\/usr\/local\/share\/julia\n","error_action":"FINISH","vol_ctxt":"-","inv_ctxt":"-","hostname":"-","cpu_model":"-"}], "summary":[{"cpuUsage":null,"process":"SRA_META","mem":null,"memUsage":null,"timeUsage":{"mean":0.05,"min":0.05,"q1":0.05,"q2":0.05,"q3":0.05,"max":0.05,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)"},"vmem":null,"reads":null,"cpu":null,"time":{"mean":6902,"min":6902,"q1":6902,"q2":6902,"q3":6902,"max":6902,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)"},"writes":null}] };
+{"task_id":"1","hash":"3e\/1a6650","native_id":"64818","process":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH","module":"-","container":"quay.io\/biocontainers\/entrez-direct:16.2--he881be0_1","tag":"group1_esearch","name":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","status":"COMPLETED","exit":"0","submit":"1775761400011","start":"1775761400073","complete":"1775761407296","duration":"7285","realtime":"5587","%cpu":"20.6","%mem":"0.0","rss":"19320832","vmem":"44118016","peak_rss":"19320832","peak_vmem":"44118016","rchar":"4400109","wchar":"10453","syscr":"5908","syscw":"964","read_bytes":"0","write_bytes":"4096","attempt":"1","workdir":"\/workspaces\/Group1\/work\/3e\/1a6650523c3afdb084b4250076cca2","script":"\n    esearch -db sra -query \"WGS[Strategy] AND USA AND Wastewater AND Metagenome\" | efetch -format native > group1_esearch.xml\n\n    ","scratch":"-","queue":"-","cpus":"1","memory":"6442450944","disk":"-","time":"14400000","env":"PYTHONNOUSERSITE=1\nR_PROFILE_USER=\/.Rprofile\nR_ENVIRON_USER=\/.Renviron\nJULIA_DEPOT_PATH=\/usr\/local\/share\/julia\n","error_action":"-","vol_ctxt":"355","inv_ctxt":"141","hostname":"-","cpu_model":"AMD EPYC 7763 64-Core Processor"},{"task_id":"2","hash":"6b\/3f96ac","native_id":"64824","process":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META","module":"-","container":"quay.io\/biocontainers\/entrez-direct:16.2--he881be0_1","tag":"Gathering SRA Runs","name":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","status":"FAILED","exit":"1","submit":"1775761400038","start":"1775761400083","complete":"1775761407387","duration":"7349","realtime":"7304","%cpu":"-","%mem":"-","rss":"-","vmem":"-","peak_rss":"-","peak_vmem":"-","rchar":"-","wchar":"-","syscr":"-","syscw":"-","read_bytes":"-","write_bytes":"-","attempt":"1","workdir":"\/workspaces\/Group1\/work\/6b\/3f96acfc20bc803180a427976060a4","script":"\n\n    bash \/workspaces\/Group1\/modules\/local\/sra_meta_pull\/sra_meta_pull.sh\n\n    ","scratch":"-","queue":"-","cpus":"1","memory":"6442450944","disk":"-","time":"14400000","env":"PYTHONNOUSERSITE=1\nR_PROFILE_USER=\/.Rprofile\nR_ENVIRON_USER=\/.Renviron\nJULIA_DEPOT_PATH=\/usr\/local\/share\/julia\n","error_action":"FINISH","vol_ctxt":"-","inv_ctxt":"-","hostname":"-","cpu_model":"-"}], "summary":[{"cpuUsage":{"mean":20.6,"min":20.6,"q1":20.6,"q2":20.6,"q3":20.6,"max":20.6,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"process":"ENTREZDIRECT_ESEARCH","mem":{"mean":19320832,"min":19320832,"q1":19320832,"q2":19320832,"q3":19320832,"max":19320832,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"memUsage":{"mean":0.3,"min":0.3,"q1":0.3,"q2":0.3,"q3":0.3,"max":0.3,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"timeUsage":{"mean":0.04,"min":0.04,"q1":0.04,"q2":0.04,"q3":0.04,"max":0.04,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"vmem":{"mean":44118016,"min":44118016,"q1":44118016,"q2":44118016,"q3":44118016,"max":44118016,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"reads":{"mean":4400109,"min":4400109,"q1":4400109,"q2":4400109,"q3":4400109,"max":4400109,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"cpu":{"mean":20.6,"min":20.6,"q1":20.6,"q2":20.6,"q3":20.6,"max":20.6,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"time":{"mean":5587,"min":5587,"q1":5587,"q2":5587,"q3":5587,"max":5587,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"},"writes":{"mean":10453,"min":10453,"q1":10453,"q2":10453,"q3":10453,"max":10453,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH (group1_esearch)"}},{"cpuUsage":null,"process":"SRA_META","mem":null,"memUsage":null,"timeUsage":{"mean":0.05,"min":0.05,"q1":0.05,"q2":0.05,"q3":0.05,"max":0.05,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)"},"vmem":null,"reads":null,"cpu":null,"time":{"mean":7304,"min":7304,"q1":7304,"q2":7304,"q3":7304,"max":7304,"minLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","maxLabel":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q1Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q2Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)","q3Label":"APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)"},"writes":null}] };
 
   </script>
 

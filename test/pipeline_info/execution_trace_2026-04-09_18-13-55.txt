@@ -1,2 +1,0 @@
-task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
-1	87/df125b	29226	APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH ([])	FAILED	1	2026-04-09 18:14:01.062	6.5s	6.5s	-	-	-	-	-
