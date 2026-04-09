@@ -1,0 +1,2 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	b8/96566c	17121	APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (Gathering SRA Runs)	FAILED	1	2026-04-09 18:03:37.374	7.4s	7.3s	-	-	-	-	-

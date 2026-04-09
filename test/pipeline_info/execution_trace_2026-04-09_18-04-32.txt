@@ -1,0 +1,2 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	ea/19a971	19813	APHLINFECTIOUSDISEASE_GROUP1:GROUP1:ENTREZDIRECT_ESEARCH ([])	COMPLETED	0	2026-04-09 18:04:53.108	6.6s	5s	14.1%	13.4 MB	25.6 MB	3.2 MB	6.4 KB

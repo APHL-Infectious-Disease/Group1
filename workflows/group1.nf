@@ -6,7 +6,9 @@
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_group1_pipeline'
-
+include {FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS} from '../subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools'
+include {SRA_META} from '../modules/local/sra_meta_pull'
+include {ENTREZDIRECT_ESEARCH} from '../modules/nf-core/entrezdirect/esearch'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -18,9 +20,22 @@ workflow GROUP1 {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
     main:
-
+    
     ch_versions = channel.empty()
 
+    // ENTREZDIRECT_ESEARCH(
+    //     tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
+    //     ),
+    //     "sra"
+    // )
+
+    SRA_META(
+        true
+    )
+    ch_versions = ch_versions.mix(SRA_META.out.versions_esearch)
+    ch_meta = SRA_META.out.tsv
+    ch_xml = SRA_META.out.xml
+    
     //
     // Collate and save software versions
     //
@@ -53,7 +68,7 @@ workflow GROUP1 {
 
     emit:
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
+    // meta = ch_meta
 }
 
 /*
