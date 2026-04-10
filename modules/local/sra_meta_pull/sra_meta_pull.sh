@@ -1,8 +1,8 @@
 #!/bin/bash 
     
     # Run the SRA query and collect all IDs
-
-    esearch -db sra -query "WGS[Strategy] AND USA AND Wastewater AND Metagenome" | efetch -format native > sra.xml
+    
+    esearch -db "sra" -query "WGS[Strategy] AND USA AND Wastewater AND Metagenome" -mindate 2025 | efetch -format native > sra.xml
 
 
     # Build xtract parameters

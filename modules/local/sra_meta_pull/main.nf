@@ -2,6 +2,8 @@ process SRA_META {
     tag "Gathering SRA Runs"
     label 'process_single'
 
+    errorStrategy 'ignore'
+
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/entrez-direct:24.0--he881be0_0':

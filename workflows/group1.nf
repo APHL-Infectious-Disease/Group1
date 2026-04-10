@@ -6,7 +6,10 @@
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_group1_pipeline'
-include {FASTQ_DOWNLOAD_PREFETCH_FASTERQDUMP_SRATOOLS} from '../subworkflows/nf-core/fastq_download_prefetch_fasterqdump_sratools'
+
+// Retrieve metadata for SRA runs and get data
+include { FASTQDL } from '../modules/nf-core/fastqdl/main'                                                              
+                                                            
 include {SRA_META} from '../modules/local/sra_meta_pull'
 include {ENTREZDIRECT_ESEARCH} from '../modules/nf-core/entrezdirect/esearch'
 /*
@@ -33,9 +36,18 @@ workflow GROUP1 {
         true
     )
     ch_versions = ch_versions.mix(SRA_META.out.versions_esearch)
-    ch_meta = SRA_META.out.tsv
-    ch_xml = SRA_META.out.xml
+    // ch_meta = SRA_META.out.tsv
+    // ch_xml = SRA_META.out.xml
     
+    
+    ch_fastqdl = tuple([meta: 'SRX26273713', id: 'SRX26273713'],'SRX26273713') // example SRA run ID, replace with actual IDs as needed
+    
+    FASTQDL(
+        ch_fastqdl
+    )
+    
+   
+
     //
     // Collate and save software versions
     //

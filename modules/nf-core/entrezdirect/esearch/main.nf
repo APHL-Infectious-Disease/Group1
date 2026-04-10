@@ -21,13 +21,13 @@ process ENTREZDIRECT_ESEARCH {
     script:
     def prefix = task.ext.prefix ?: "${meta}"
     def args = task.ext.args ?: '| efetch -format native'
+
     """
     esearch -db $database -query $term $args > ${prefix}.xml
-
     """
 
     stub:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta}"
     """
     touch ${prefix}.xml
 
