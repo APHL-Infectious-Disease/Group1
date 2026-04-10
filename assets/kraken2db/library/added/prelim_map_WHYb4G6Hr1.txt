@@ -1,0 +1,1 @@
+ACCNUM	NC_000883.2_Human_parvovirus_B19	NC_000883
