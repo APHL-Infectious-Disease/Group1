@@ -7,6 +7,14 @@ include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_group1_pipeline'
 
+// Retrieve metadata for SRA runs and get data
+include { FASTQDL } from '../modules/nf-core/fastqdl/main'                                                              
+                                                            
+include {SRA_META} from '../modules/local/sra_meta_pull'
+include {ENTREZDIRECT_ESEARCH} from '../modules/nf-core/entrezdirect/esearch'
+
+                                                       
+ include { KRAKEN2_KRAKEN2 } from '../modules/nf-core/kraken2/kraken2/main'   
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -18,8 +26,37 @@ workflow GROUP1 {
     take:
     ch_samplesheet // channel: samplesheet read in from --input
     main:
-
+    
     ch_versions = channel.empty()
+
+    ENTREZDIRECT_ESEARCH(
+        tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
+        ),
+        "sra"
+    )
+
+    SRA_META(
+        true
+    )
+    ch_versions = ch_versions.mix(SRA_META.out.versions_esearch)
+    // ch_meta = SRA_META.out.tsv
+    // ch_xml = SRA_META.out.xml
+    
+    
+    ch_fastqdl = tuple([meta: 'SRX26273713', id: 'SRX26273713'],'SRX26273713') // example SRA run ID, replace with actual IDs as needed
+    
+    FASTQDL(
+        ch_fastqdl
+    )
+    ch_fastq = FASTQDL.out.fastq
+    ch_kraken_db = Channel.fromPath('/workspaces/Group1/assets/kraken2db/')
+    KRAKEN2_KRAKEN2(
+        ch_fastq,
+        ch_kraken_db,
+        false,
+        true
+    )
+   
 
     //
     // Collate and save software versions
@@ -53,7 +90,7 @@ workflow GROUP1 {
 
     emit:
     versions       = ch_versions                 // channel: [ path(versions.yml) ]
-
+    // meta = ch_meta
 }
 
 /*
