@@ -1,0 +1,1 @@
+ACCNUM	NC_001430.1_Human_enterovirus_D	NC_001430
