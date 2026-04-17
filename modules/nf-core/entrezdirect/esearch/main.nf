@@ -13,6 +13,8 @@ process ENTREZDIRECT_ESEARCH {
 
     output:
     tuple val(meta), path("*.xml") , emit: xml
+    tuple val(meta), path("sra_meta.tsv") , emit: sra_meta
+    tuple val(meta), path("sra_meta_top3.tsv") , emit: sra_meta_top3
     tuple val("${task.process}"), val('ENTREZDIRECT'), eval('esearch -version 2>&1'), emit: versions_esearch, topic: versions
 
     when:
@@ -24,6 +26,28 @@ process ENTREZDIRECT_ESEARCH {
 
     """
     esearch -db $database -query $term $args > ${prefix}.xml
+
+
+    # Build header row
+    {
+        printf "experiment_id\tlibrary_strategy\tlibrary_selection\ttaxon_id\tscientific_name\tcollection_date\tlocation\tlat_lon"
+        printf "\n"
+    } > sra_meta.tsv
+
+    xtract -input ${prefix}.xml -pattern EXPERIMENT_PACKAGE \\
+        -first PRIMARY_ID \\
+        -element LIBRARY_STRATEGY \\
+        -element LIBRARY_SELECTION \\
+        -element TAXON_ID \\
+        -element SCIENTIFIC_NAME \\
+        -block SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE \\
+        -if TAG -equals collection_date -element VALUE \\
+        -block SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE \\
+        -if TAG -equals geo_loc_name -element VALUE \\
+        -block SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE \\
+        -if TAG -equals lat_lon -element VALUE | grep "USA" >> sra_meta.tsv
+    
+    cat sra_meta.tsv |grep 2025 | sort -k 6 | tail -n 3 | cut -f1 > sra_meta_top3.tsv
     """
 
     stub:

@@ -14,14 +14,14 @@ process FASTQDL {
     tuple val(meta), path("*.fastq.gz")       , emit: fastq
     tuple val(meta), path("*-run-info.tsv")   , emit: runinfo
     tuple val(meta), path("*-run-mergers.tsv"), emit: runmergers, optional: true
-    tuple val("${task.process}"), val('fastq-dl'), eval('fastq-dl --version |& sed "s/.* //"'), emit: versions_fastqdl, topic: versions
+    // tuple val("${task.process}"), val('fastq-dl'), eval('fastq-dl --version |& sed "s/.* //"'), emit: versions_fastqdl, topic: versions
 
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
+    def args = task.ext.args ?: '--provider sra'
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     fastq-dl \\

@@ -29,27 +29,34 @@ workflow GROUP1 {
     
     ch_versions = channel.empty()
 
-    ENTREZDIRECT_ESEARCH(
-        tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
+    SRA_META(
+         tuple('group1_esearch','"WGS[Strategy] AND USA AND Wastewater AND Metagenome"'
         ),
         "sra"
     )
-
-    SRA_META(
-        true
-    )
-    ch_versions = ch_versions.mix(SRA_META.out.versions_esearch)
+    // ch_versions = ch_versions.mix(SRA_META.out.versions_esearch)
     // ch_meta = SRA_META.out.tsv
     // ch_xml = SRA_META.out.xml
     
+    // Read TSV and convert to a channel from sra_meta_top3.tsv, which contains the top 3 SRA run IDs
     
-    ch_fastqdl = tuple([meta: 'SRX26273713', id: 'SRX26273713'],'SRX26273713') // example SRA run ID, replace with actual IDs as needed
+    tsvChannel = SRA_META.out.sra_meta_top
+    .flatMap { file ->
+        file.readLines().collect { line ->
+            def cols = line.split('\t')
+            cols        }
+    }
+     ch_fastqdl = tuple([meta: 'SRX26273713', id: 'SRX26273713'],'SRX26273713') // example SRA run ID
     
+  
     FASTQDL(
-        ch_fastqdl
+        tsvChannel.map { cols -> tuple([meta: cols[0], id: cols[0]], cols[0]) }, // meta and id are the same in this case
     )
     ch_fastq = FASTQDL.out.fastq
-    ch_kraken_db = Channel.fromPath('/workspaces/Group1/assets/kraken2db/')
+    ch_kraken_db = Channel.fromPath('/workspaces/Group1/assets/kraken2db_v2/')
+    .collect()
+
+  
     KRAKEN2_KRAKEN2(
         ch_fastq,
         ch_kraken_db,
