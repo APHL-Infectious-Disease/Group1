@@ -47,7 +47,7 @@ tag "$meta"
         -block SAMPLE/SAMPLE_ATTRIBUTES/SAMPLE_ATTRIBUTE \\
         -if TAG -equals lat_lon -element VALUE | grep "USA" >> sra_meta.tsv
     
-    cat sra_meta.tsv |grep 2025 | sort -k 6 | tail -n5 | cut -f1 > sra_meta_top3.tsv
+    cat sra_meta.tsv | grep -v Wisconsin | sort -R | tail -n20 | cut -f1 > sra_meta_top3.tsv
     """
 
     stub:
