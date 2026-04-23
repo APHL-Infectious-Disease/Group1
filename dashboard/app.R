@@ -8,7 +8,7 @@
 #
 
 library(shiny)
-
+library(htmltools)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
@@ -64,5 +64,7 @@ server <- function(input, output) {
 
 }
 
+#save html
+save_html(ui, file = "enteric_ww_dash.html")
 # Run the application 
 shinyApp(ui = ui, server = server)

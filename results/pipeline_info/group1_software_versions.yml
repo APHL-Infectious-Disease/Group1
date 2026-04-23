@@ -1,8 +1,0 @@
-KRAKEN2_KRAKEN2:
-  kraken2: 2.1.6
-  pigz: 2.8
-SRA_META:
-  ENTREZDIRECT: 16.2
-Workflow:
-    APHL-Infectious-Disease/group1: v1.0.0dev
-    Nextflow: 25.10.4
