@@ -12,30 +12,23 @@ workflow BUILD_POSTKRAKEN_MATRIX {
     ch_kraken_reports
 
     main:
-
     ch_versions = Channel.empty()
 
-    // sra metadata is already a file channel; keep first file only
-    ch_sra_meta_single = ch_sra_meta_tsv
+    ch_meta_csv = ch_sra_meta_tsv.first()
 
-    // kraken reports come in as tuple(meta, path) -> convert to plain paths
-    ch_kraken_report_paths = ch_kraken_reports
-        .map { item ->
-            if (item instanceof List || item instanceof ArrayList) {
-                return item[-1]
-            }
-            return item
-        }
+    ch_report_files = ch_kraken_reports
+        .map { meta, report -> report }
         .collect()
 
     POSTKRAKEN_MATRIX(
-        ch_sra_meta_single,
-        ch_kraken_report_paths
+        ch_meta_csv,
+        ch_report_files
     )
 
     ch_versions = ch_versions.mix(POSTKRAKEN_MATRIX.out.versions)
 
     emit:
-    matrix   = POSTKRAKEN_MATRIX.out.matrix
-    versions = ch_versions
+    matrix    = POSTKRAKEN_MATRIX.out.matrix
+    hits_only = POSTKRAKEN_MATRIX.out.hits_only
+    versions  = ch_versions
 }

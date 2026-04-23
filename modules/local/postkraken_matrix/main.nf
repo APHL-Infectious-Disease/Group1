@@ -4,8 +4,8 @@ process POSTKRAKEN_MATRIX {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'docker://python:3.11-slim' :
-        'python:3.11-slim' }"
+        'docker://python:3.11' :
+        'python:3.11' }"
 
     input:
     path sra_meta_tsv
@@ -13,6 +13,7 @@ process POSTKRAKEN_MATRIX {
 
     output:
     path "metadata_postkraken.csv", emit: matrix
+    path "metadata_postkraken_hits_only.csv", emit: hits_only
     path "versions.yml", emit: versions
 
     script:
