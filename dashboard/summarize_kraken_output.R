@@ -23,9 +23,8 @@ kraken_reports <- bind_rows(lapply(kraken_reports_files, function(x) {
 colnames(kraken_reports) <- c("percent", "count", "count_taxon_exclusive", "rank_code", "ncbi_taxon_id", "scientific_name", "sample_srx", "summary_date")
   
 
-# identify taxa of interest based on fasta files in reference folder
-ref_tax_ids <- list.files("./ref_fastas") %>%
-  str_extract("(?<=NC_)[^.|^_]+")
+# pull taxa id's from map file
+ref_tax_ids <- read.delim("assets//kraken2db_v2//seqid2taxid.map", header = FALSE) %>% pull(V2)
 
 
 # Filter kraken_reports
