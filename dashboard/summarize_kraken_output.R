@@ -45,6 +45,6 @@ if (!dir.exists("./test/summary")) {
   dir.create("./test/summary", recursive = TRUE)
 }
 
-write.csv(kraken_comb, paste0("./test/summary/kraken_summary-", Sys.Date(), ".csv"))
+write.csv(kraken_comb, paste0("./test/summary/kraken_summary-", Sys.Date(), ".csv"), row.names = FALSE)
 
-write.csv(kraken_comb_wide, paste0("./test/summary/kraken_summary_wide_format-", Sys.Date(), ".csv"))
+write.csv(kraken_comb_wide, paste0("./test/summary/kraken_summary_wide_format-", Sys.Date(), ".csv"), row.names = FALSE)
