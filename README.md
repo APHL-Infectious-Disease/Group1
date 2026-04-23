@@ -6,54 +6,241 @@
 
 [![Open in GitHub Codespaces](https://img.shields.io/badge/Open_In_GitHub_Codespaces-black?labelColor=grey&logo=github)](https://github.com/codespaces/new/APHL-Infectious-Disease/group1)
 [![GitHub Actions CI Status](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/nf-test.yml/badge.svg)](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/nf-test.yml)
-[![GitHub Actions Linting Status](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/linting.yml/badge.svg)](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![GitHub Actions Linting Status](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/linting.yml/badge.svg)](https://github.com/APHL-Infectious-Disease/group1/actions/workflows/linting.yml)
 [![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
-[![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.04.0-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
-[![nf-core template version](https://img.shields.io/badge/nf--core_template-3.5.2-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/3.5.2)
+[![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.04.0-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D)](https://www.nextflow.io/)
 [![run with conda](http://img.shields.io/badge/run%20with-conda-3EB049?labelColor=000000&logo=anaconda)](https://docs.conda.io/en/latest/)
 [![run with docker](https://img.shields.io/badge/run%20with-docker-0db7ed?labelColor=000000&logo=docker)](https://www.docker.com/)
 [![run with singularity](https://img.shields.io/badge/run%20with-singularity-1d355c.svg?labelColor=000000)](https://sylabs.io/docs/)
-[![Launch on Seqera Platform](https://img.shields.io/badge/Launch%20%F0%9F%9A%80-Seqera%20Platform-%234256e7)](https://cloud.seqera.io/launch?pipeline=https://github.com/APHL-Infectious-Disease/group1)
+
+---
 
 ## Introduction
 
-**APHL-Infectious-Disease/group1** is a Nextflow-based bioinformatics pipeline being developed for the 2026 APHL Hackathon by Group 1. The current goal of the project is to re-screen publicly available **wastewater shotgun metagenomic sequencing data** for a targeted panel of **enteric viruses**, with an emphasis on pathogens of public health interest such as norovirus, sapovirus, astrovirus, adenovirus F, enteroviruses, and rotavirus A.
+**APHL-Infectious-Disease/group1** is a Nextflow-based bioinformatics pipeline developed for the 2026 APHL Hackathon.
 
-The pipeline is intended to support a proof-of-concept workflow that can:
-- discover or accept selected public sequencing run accessions
-- retrieve raw sequencing reads from public repositories
-- screen reads against a curated viral reference panel
-- summarize candidate detections for downstream reporting and visualization
+The pipeline enables re-analysis of publicly available sequencing data—particularly **wastewater metagenomic datasets**—to detect **measles and enteric viruses of public health interest**, including:
 
-This repository currently represents an **early prototype**, and pipeline structure, inputs, outputs, and analysis steps are still under active development.
+- Norovirus  
+- Rotavirus  
+- Enterovirus  
+- Astrovirus  
+- Adenovirus  
+- Sapovirus  
+- Poliovirus  
+- Morbillivirus  
 
-## Planned workflow
+---
 
-The current planned workflow is:
+## Key Features
 
-1. **Identify public datasets** matching project criteria, such as U.S. wastewater shotgun/WGS metagenomic runs
-2. **Retrieve sequencing reads** from public repositories such as SRA and/or ENA
-3. **Preprocess and quality-check reads**
-4. **Screen reads against a curated enteric virus reference set**
-5. **Summarize and export results** for downstream tables, dashboards, and visualization
+### Multiple Input Modes
 
-## Current project status
+| Mode | Description |
+|------|------------|
+| `--mode sra` | Automatically discover datasets from NCBI SRA |
+| `--mode accessions` | Use a user-provided list of SRR/ERR accessions |
+| `--mode samplesheet` | Provide local FASTQ files |
 
-This repository currently includes:
-- an `nf-core`-based Nextflow project scaffold
-- initial configuration and testing structure
-- a preliminary reference FASTA collection for the target virus panel
-- placeholder documentation that will continue to be updated as development progresses
+---
 
+### Metadata Enrichment
+
+- Pulls **RunInfo metadata from SRA**
+- Enriches with **BioSample metadata via NCBI E-utilities**
+- Extracts:
+  - collection date
+  - geographic location
+  - isolation source
+  - lat/lon (when available)
+- Filters to **U.S.-based samples**
+
+---
+
+### Data Processing
+
+- Parallel FASTQ download via `fastq-dl`
+- Optional preprocessing (QC + trimming)
+- Kraken2 classification against viral database
+
+---
+
+### Post-classification Analysis
+
+Generates:
+
+- `metadata_postkraken.csv`
+- `metadata_postkraken_hits_only.csv`
+
+---
+
+### Optional Steps
+
+| Feature | Parameter |
+|--------|----------|
+| Preprocessing | `--run_preprocessing` |
+| MultiQC report | `--run_multiqc` |
+
+---
+
+## Workflow Overview
+
+```text
+SRA / Accessions / Samplesheet
+              ↓
+         FASTQ Download
+              ↓
+        (Optional QC)
+              ↓
+           Kraken2
+              ↓
+     Metadata Enrichment
+              ↓
+    PostKraken Matrix Build
+              ↓
+       Results Dashboard
+```
+
+## Subworkflows and Modules
+
+### SRA_DISCOVERY
+- Uses Entrez to search SRA  
+- Retrieves RunInfo metadata  
+- Outputs accession list + metadata  
+
+### FETCH_READS (FASTQDL)
+- Downloads FASTQ files from SRA  
+- Supports parallel retrieval  
+
+### MAKE_ACCESSIONS_METADATA
+- Builds metadata for user-provided accessions  
+- Pulls SRA + BioSample metadata  
+
+### ENRICH_SRA_METADATA
+- Enhances SRA metadata with BioSample fields  
+- Improves completeness (dates, locations, etc.)  
+
+### PREPROCESS_READS (Optional)
+- Tools: `fastp`, `FastQC`, `seqkit`  
+- Performs trimming + QC  
+
+### PREPARE_KRAKEN_DB
+- Accepts:
+  - local DB (`--kraken2_db`)
+  - remote DB (`--kraken2_db_url`)  
+- Downloads and prepares database if needed  
+
+### CLASSIFY_READS (Kraken2)
+- Runs Kraken2 classification  
+- Produces per-sample reports  
+
+### BUILD_POSTKRAKEN_MATRIX
+- Combines:
+  - Kraken reports  
+  - enriched metadata  
+- Generates final matrices  
+
+### POSTKRAKEN_MATRIX
+- Parses Kraken outputs  
+- Produces:
+  - full matrix  
+  - hits-only matrix  
+
+### QC REPORT (Optional)
+- Generates MultiQC report  
+
+### RESULTS DASHBOARD
+
+---
 
 ## Usage
+
+### SRA Mode
+
+```bash
+nextflow run main.nf \
+  -profile conda \
+  --mode sra \
+  --kraken2_db assets/kraken2db_v2 \
+  --max_runs 20 \
+  --outdir results
+```
+
+### Accessions Mode
+
+```bash
+nextflow run main.nf \
+  -profile conda \
+  --mode accessions \
+  --accessions docs/accessions.txt \
+  --kraken2_db assets/kraken2db_v2 \
+  --outdir results
+```
+
+### Samplesheet Mode
+
+```bash
+nextflow run main.nf \
+  -profile conda \
+  --mode samplesheet \
+  --input path/to/samplesheet.csv \
+  --kraken2_db assets/kraken2db_v2 \
+  --outdir results
+```
+
+### Using a Remote Kraken2 Database
+
+```bash
+nextflow run main.nf \
+  -profile conda \
+  --mode samplesheet \
+  --input path/to/samplesheet.csv \
+  --kraken2_db assets/kraken2db_v2 \
+  --outdir results
+```
+
+## Optional Parameters
+
+| Parameter | Description |
+|----------|------------|
+| `--run_preprocessing` | Enable QC + trimming |
+| `--run_multiqc` | Generate MultiQC report |
+| `--max_runs` | Limit SRA runs |
+| `--subsample_size` | Subsample reads |
+
+---
+
+## Output
+
+| File | Description |
+|------|------------|
+| `metadata_postkraken.csv` | Full detection matrix |
+| `metadata_postkraken_hits_only.csv` | Filtered detections |
+| `multiqc_report.html` | QC summary (optional) |
+| `pipeline_info/` | Execution logs + versions |
+
+## Known Limitations
+
+- SRA metadata may be incomplete or inconsistent  
+- BioSample metadata availability varies  
+- Detection thresholds not yet standardized  
+- Prototype only — not production ready  
+
+---
+
+## Future Directions
+
+- Improve SRA query strategy  
+- Add detection confidence scoring  
+- Expand pathogen panel  
+- Integrate dashboards  
+- Optimize performance at scale  
+
 
 > [!NOTE]
 > If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
 
 First, prepare a samplesheet with your input data that looks as follows:
 
@@ -84,24 +271,8 @@ nextflow run APHL-Infectious-Disease/group1 \
 
 ## Credits
 
-APHL-Infectious-Disease/group1 was originally written by Group 1.
+APHL-Infectious-Disease/group1 was written by Group 1.
 
-We thank the following people for their extensive assistance in the development of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
-
-## Contributions and Support
-
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
-
-## Citations
-
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use APHL-Infectious-Disease/group1 for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
-
-An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
 This pipeline uses code and infrastructure developed and maintained by the [nf-core](https://nf-co.re) community, reused here under the [MIT license](https://github.com/nf-core/tools/blob/main/LICENSE).
 
