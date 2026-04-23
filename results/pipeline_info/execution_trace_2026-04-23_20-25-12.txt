@@ -1,0 +1,2 @@
+task_id	hash	native_id	name	status	exit	submit	duration	realtime	%cpu	peak_rss	peak_vmem	rchar	wchar
+1	2a/58c406	22614	APHLINFECTIOUSDISEASE_GROUP1:GROUP1:SRA_META (group1_esearch)	COMPLETED	0	2026-04-23 20:25:17.803	1m 40s	1m 40s	6.7%	102.2 MB	149.6 MB	376.7 MB	296.5 MB
