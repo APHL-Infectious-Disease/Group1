@@ -164,7 +164,7 @@ def main():
             v.startswith("united states of america")
         )
 
-    out = out[out["location"].map(is_usa_location)].copy()
+    out["usa_sample"] = out["location"].map(is_usa_location)
 
     out.to_csv(args.out, index=False)
 

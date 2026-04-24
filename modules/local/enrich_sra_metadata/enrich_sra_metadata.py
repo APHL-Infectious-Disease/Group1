@@ -149,7 +149,7 @@ def enrich_runinfo(runinfo_path: str) -> pd.DataFrame:
             v.startswith("united states of america")
         )
 
-    out = out[out["location"].map(is_usa_location)].copy()
+    out["usa_sample"] = out["location"].map(is_usa_location)
 
     return out
 
