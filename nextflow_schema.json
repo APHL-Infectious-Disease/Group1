@@ -160,7 +160,7 @@
         },
         "sra_query": {
             "type": "string",
-            "default": "((txid527639[Organism] OR wastewater OR sewage) AND (virome OR viral OR metagenomic) AND (WGS[Strategy] OR AMPLICON[Strategy])) AND (2026/04/13:2026/04/20[PDAT])"
+            "default": "(((txid527639[Organism] OR wastewater OR sewage) AND (virome OR viral OR metagenomic) AND WGS[Strategy]) NOT (AMPLICON[Strategy] OR ARTIC))"
         },
         "max_runs": {
             "type": "integer",
@@ -201,6 +201,14 @@
         "pathogens_of_interest": {
             "type": "string",
             "default": "Norovirus,Rotavirus,Parvovirus,Enterovirus,Astrovirus,Poliovirus,Sapovirus,Adenovirus,Morbillivirus,Unclassified"
+        },
+        "sra_candidate_limit": {
+            "type": "integer",
+            "default": 1000
+        },
+        "max_sra_mb": {
+            "type": "integer",
+            "default": 500
         }
     }
 }

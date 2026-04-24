@@ -18,7 +18,6 @@ include { PREPARE_KRAKEN_DB }        from '../subworkflows/local/prepare_kraken_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 include { MAKE_ACCESSIONS_METADATA } from '../modules/local/make_accessions_metadata/main'
-include { ENRICH_SRA_METADATA }      from '../modules/local/enrich_sra_metadata/main'
 
 workflow GROUP1 {
 
@@ -35,16 +34,13 @@ workflow GROUP1 {
     */
     if (params.mode == 'sra') {
         SRA_DISCOVERY()
-        ch_input = SRA_DISCOVERY.out.reads
 
         FETCH_READS(
-            ch_input
+            SRA_DISCOVERY.out.reads
         )
-        ch_reads = FETCH_READS.out.reads
 
-        ENRICH_SRA_METADATA(
-            SRA_DISCOVERY.out.tsv
-        )
+        ch_reads = FETCH_READS.out.reads
+        ch_metadata_for_matrix = SRA_DISCOVERY.out.tsv
 
     } else if (params.mode == 'accessions') {
 
@@ -70,14 +66,18 @@ workflow GROUP1 {
         FETCH_READS(
             ch_input
         )
+
         ch_reads = FETCH_READS.out.reads
 
         MAKE_ACCESSIONS_METADATA(
             ch_accessions_file
         )
 
+        ch_metadata_for_matrix = MAKE_ACCESSIONS_METADATA.out.csv
+
     } else if (params.mode == 'samplesheet') {
         ch_reads = ch_samplesheet
+        ch_metadata_for_matrix = Channel.empty()
 
     } else {
         error "Unsupported params.mode: ${params.mode}. Use 'sra', 'accessions', or 'samplesheet'."
@@ -121,14 +121,9 @@ workflow GROUP1 {
         POST-KRAKEN MATRIX
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     */
-    if (params.mode == 'sra') {
+    if (params.mode == 'sra' || params.mode == 'accessions') {
         BUILD_POSTKRAKEN_MATRIX(
-            ENRICH_SRA_METADATA.out.csv,
-            CLASSIFY_READS.out.kraken2_report
-        )
-    } else if (params.mode == 'accessions') {
-        BUILD_POSTKRAKEN_MATRIX(
-            MAKE_ACCESSIONS_METADATA.out.csv,
+            ch_metadata_for_matrix,
             CLASSIFY_READS.out.kraken2_report
         )
     }
@@ -192,14 +187,10 @@ workflow GROUP1 {
     }
 
     emit:
-    reads               = ch_reads_for_kraken
-    kraken2_report      = CLASSIFY_READS.out.kraken2_report
-    metadata_postkraken = (params.mode == 'sra' || params.mode == 'accessions') ? BUILD_POSTKRAKEN_MATRIX.out.matrix : Channel.empty()
+    reads                         = ch_reads_for_kraken
+    kraken2_report                = CLASSIFY_READS.out.kraken2_report
+    metadata_postkraken           = (params.mode == 'sra' || params.mode == 'accessions') ? BUILD_POSTKRAKEN_MATRIX.out.matrix : Channel.empty()
     metadata_postkraken_hits_only = (params.mode == 'sra' || params.mode == 'accessions') ? BUILD_POSTKRAKEN_MATRIX.out.hits_only : Channel.empty()
-    multiqc_report      = params.run_multiqc ? REPORTING.out.report : Channel.empty()
-    versions            = ch_versions
+    multiqc_report                = params.run_multiqc ? REPORTING.out.report : Channel.empty()
+    versions                      = ch_versions
 }
-
-
-
-    

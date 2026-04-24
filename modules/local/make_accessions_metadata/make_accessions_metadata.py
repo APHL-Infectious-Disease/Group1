@@ -4,6 +4,7 @@ import argparse
 import sys
 import time
 from typing import Dict, List
+
 import pandas as pd
 import requests
 from lxml import etree
@@ -20,7 +21,18 @@ def parse_args():
 
 def chunked(items: List[str], n: int):
     for i in range(0, len(items), n):
-        yield items[i:i+n]
+        yield items[i:i + n]
+
+
+def is_usa_location(value: str) -> bool:
+    v = str(value).strip().lower()
+    return (
+        v.startswith("usa")
+        or v.startswith("u.s.a")
+        or v.startswith("us:")
+        or v.startswith("united states")
+        or v.startswith("united states of america")
+    )
 
 
 def fetch_runinfo(accessions: List[str]) -> pd.DataFrame:
@@ -36,9 +48,16 @@ def fetch_runinfo(accessions: List[str]) -> pd.DataFrame:
         timeout=120,
     )
     resp.raise_for_status()
+
     text = resp.text.strip()
     if not text:
-        return pd.DataFrame(columns=["Run", "BioSample", "BioProject", "LibraryStrategy", "LibrarySource", "SampleName", "ScientificName"])
+        return pd.DataFrame(
+            columns=[
+                "Run", "BioSample", "BioProject", "LibraryStrategy",
+                "LibrarySource", "LibraryLayout", "SampleName", "ScientificName"
+            ]
+        )
+
     from io import StringIO
     return pd.read_csv(StringIO(text), dtype=str).fillna("")
 
@@ -50,7 +69,7 @@ def fetch_biosample_xml(biosample_ids: List[str]) -> bytes:
         params={
             "db": "biosample",
             "id": ids,
-            "retmode": "xml"
+            "retmode": "xml",
         },
         timeout=120,
     )
@@ -74,8 +93,7 @@ def parse_biosample_attributes(xml_bytes: bytes) -> Dict[str, Dict[str, str]]:
             "biosample_lat_lon": "",
         }
 
-        attrs = bs.xpath(".//Attributes/Attribute")
-        for attr in attrs:
+        for attr in bs.xpath(".//Attributes/Attribute"):
             name = (attr.get("attribute_name") or "").strip().lower()
             value = "".join(attr.itertext()).strip()
 
@@ -98,7 +116,8 @@ def main():
 
     with open(args.accessions, "r", encoding="utf-8") as handle:
         accession_list = [
-            line.strip() for line in handle
+            line.strip().upper()
+            for line in handle
             if line.strip() and not line.strip().startswith("#")
         ]
 
@@ -106,6 +125,7 @@ def main():
         raise ValueError("No accessions found in accessions file")
 
     runinfo_batches = []
+
     for batch in chunked(accession_list, 200):
         try:
             runinfo_batches.append(fetch_runinfo(batch))
@@ -116,9 +136,22 @@ def main():
     if runinfo_batches:
         runinfo_df = pd.concat(runinfo_batches, ignore_index=True).fillna("")
     else:
-        runinfo_df = pd.DataFrame(columns=["Run", "BioSample", "BioProject", "LibraryStrategy", "LibrarySource", "SampleName", "ScientificName"])
+        runinfo_df = pd.DataFrame(
+            columns=[
+                "Run", "BioSample", "BioProject", "LibraryStrategy",
+                "LibrarySource", "LibraryLayout", "SampleName", "ScientificName"
+            ]
+        )
 
-    biosamples = sorted({x.strip() for x in runinfo_df.get("BioSample", pd.Series([], dtype=str)).tolist() if x.strip()})
+    if "Run" in runinfo_df.columns:
+        runinfo_df["Run"] = runinfo_df["Run"].astype(str).str.strip().str.upper()
+
+    biosamples = sorted({
+        x.strip()
+        for x in runinfo_df.get("BioSample", pd.Series([], dtype=str)).tolist()
+        if x.strip()
+    })
+
     biosample_map: Dict[str, Dict[str, str]] = {}
 
     for batch in chunked(biosamples, 200):
@@ -133,7 +166,7 @@ def main():
     merged = requested_df.merge(runinfo_df, how="left", on="Run").fillna("")
 
     def lookup(bs_id: str, key: str) -> str:
-        bs_id = (bs_id or "").strip()
+        bs_id = str(bs_id or "").strip()
         if not bs_id:
             return ""
         return biosample_map.get(bs_id, {}).get(key, "")
@@ -146,6 +179,7 @@ def main():
     out["location"] = out["BioSample"].map(lambda x: lookup(x, "biosample_location"))
     out["library_strategy"] = merged.get("LibraryStrategy", "")
     out["library_source"] = merged.get("LibrarySource", "")
+    out["library_layout"] = merged.get("LibraryLayout", "")
     out["sample_name"] = merged.get("SampleName", "")
     out["bioproject"] = merged.get("BioProject", "")
     out["biosample_isolation_source"] = out["BioSample"].map(lambda x: lookup(x, "biosample_isolation_source"))
@@ -153,20 +187,14 @@ def main():
 
     out["source"] = out["source"].mask(
         out["source"].astype(str).str.strip() == "",
-        out["biosample_isolation_source"]
+        out["biosample_isolation_source"],
     )
-
-    def is_usa_location(value: str) -> bool:
-        v = str(value).strip().lower()
-        return (
-            v.startswith("usa") or
-            v.startswith("united states") or
-            v.startswith("united states of america")
-        )
 
     out["usa_sample"] = out["location"].map(is_usa_location)
 
     out.to_csv(args.out, index=False)
 
+
 if __name__ == "__main__":
     main()
+
