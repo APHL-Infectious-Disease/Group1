@@ -43,8 +43,9 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
-  # Load data
-  kraken_summary <- read.csv("results/summary/kraken_summary-2026-04-28.csv")
+  # Load data - pull most recent date
+  most_recent_kraken <- list.files("results/summary", full.names = TRUE) %>% sort(decreasing = TRUE) %>% first()
+  kraken_summary <- read.csv(most_recent_kraken)
   
   output$barPlot <- renderPlot({
     
