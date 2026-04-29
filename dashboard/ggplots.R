@@ -1,9 +1,10 @@
-setwd("C:/Users/emily/Documents/LACPHL_work/aphl_hackathon")
+setwd("./dashboard") ##set working directory to dashboard folder
 
 library(ggplot2)
 library(readr)
 
-summaryfile <- read_csv("kraken_summary-2026-04-28.csv") ##initial file read in - no metadata attached
+summaryfile <- read_csv("../results/summary/kraken_summary-2026-04-28.csv") 
+##initial file read in - no metadata attached
 
 summary_oi <- summaryfile[summaryfile$scientific_name != "unclassified", ] ##subset to exclude unclassified
 
