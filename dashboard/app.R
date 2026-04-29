@@ -154,7 +154,7 @@ output$map <- renderLeaflet({
       addCircleMarkers(popup = ~scientific_name,
       color = ~colorFactor("viridis", summary_data_map$scientific_name)(scientific_name),
       fillOpacity = 0.4, 
-      radius = ~count.y * 15, group = ~scientific_name, clusterOptions = markerClusterOptions()) %>%
+      radius = ~count.y * 15, group = ~scientific_name, clusterOptions = markerClusterOptions())
        })
   
   
