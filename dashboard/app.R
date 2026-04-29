@@ -135,19 +135,27 @@ summary_data_map <- summary_data %>%
   mutate(lng = str_replace(lng, "W", "")) %>%
   mutate(lat = str_replace(lat, "- ", "-")) %>%
   mutate(lng = str_replace(lng, "- ", "-"))%>%
-  mutate(lat = as.numeric(lat), lng = as.numeric(lng))
+  mutate(lat = jitter(as.numeric(lat), factor = 0.2), lng = jitter(as.numeric(lng), factor = 0.2))
+
+enteric_count <- summary_data_map %>%
+  group_by(scientific_name, location) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count))
+
+enteric_map <- summary_data_map %>%
+  left_join(enteric_count, by = c("scientific_name", "location"))
 
 output$map <- renderLeaflet({
-    summary_data_map %>%
+    enteric_map %>%
       leaflet() %>%
       addProviderTiles(providers$CartoDB.Positron,
         options = providerTileOptions(noWrap = TRUE)
       ) %>%
       addCircleMarkers(popup = ~scientific_name,
-      color = ~colorFactor("RdYlGn", summary_data_map$scientific_name)(scientific_name),
-      fillOpacity = 0.3, 
-      radius = ~count)
-  })
+      color = ~colorFactor("viridis", summary_data_map$scientific_name)(scientific_name),
+      fillOpacity = 0.4, 
+      radius = ~count.y * 15, group = ~scientific_name, clusterOptions = markerClusterOptions()) %>%
+       })
   
   
 }
