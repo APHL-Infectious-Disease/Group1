@@ -107,7 +107,8 @@ server <- function(input, output) {
       # Drop unclassified from results
       filter(scientific_name != "unclassified") %>%
       ggplot() +
-      stat_summary(fun = mean, geom = "col", aes_string(x = input$x_var, y = input$y_var, fill = input$fill_var)) +
+      stat_summary(fun = mean, geom = "col", position = "dodge",
+      aes_string(x = input$x_var, y = input$y_var, fill = input$fill_var)) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs( )
   })
@@ -120,8 +121,10 @@ server <- function(input, output) {
     summary_data %>%
       # Drop unclassified from results
       filter(scientific_name != "unclassified") %>%
-      ggplot() + 
-      geom_point(aes_string(x = "collection_date", y = input$y_var2, color = "scientific_name")) +
+      ggplot(aes_string(x = "collection_date", y = input$y_var2, color = "location")) + 
+      geom_point() +
+      geom_line() +
+      facet_wrap(~scientific_name, ncol = 2) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs( )
   })
