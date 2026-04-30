@@ -14,7 +14,7 @@ process FASTQDL {
     tuple val(meta), path("*.fastq.gz")       , emit: fastq
     tuple val(meta), path("*-run-info.tsv")   , emit: runinfo
     tuple val(meta), path("*-run-mergers.tsv"), emit: runmergers, optional: true
-    // tuple val("${task.process}"), val('fastq-dl'), eval('fastq-dl --version |& sed "s/.* //"'), emit: versions_fastqdl, topic: versions
+    tuple val("${task.process}"), val('fastq-dl'), eval('fastq-dl --version |& sed "s/.* //"'), emit: versions_fastqdl, topic: versions
 
 
     when:
