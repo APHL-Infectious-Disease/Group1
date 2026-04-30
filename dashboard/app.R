@@ -14,6 +14,8 @@ library(ggplot2)
 library(readr)
 library(bslib)
 library(leaflet)
+library(DT)
+
 thematic::thematic_shiny(font = "auto")
 # setup fonts
 
@@ -50,7 +52,8 @@ ui <- fluidPage(
         tabPanel("Organism Frequency", plotOutput("org_freq")),
         tabPanel("Organism Percent", plotOutput("org_percent")),
         tabPanel("Organism Location", plotOutput("org_locale")),
-        tabPanel("Map", leafletOutput("map"))
+        tabPanel("Map", leafletOutput("map")),
+        tabPanel("Data", dataTableOutput("data"))
       )))
     
 )
@@ -61,11 +64,35 @@ server <- function(input, output) {
   bs_themer()
 
 
-  # Load data - pull most recent date
-  most_recent_kraken <- list.files("../results/summary/*", full.names = TRUE) %>% 
-  sort(decreasing = TRUE) %>% 
-  first()
-  
+  # Load data - pull most recent file
+  most_recent_kraken <- read.csv("/workspaces/Group1/results/postkraken/metadata_postkraken.csv")
+  bugs <- c("Norovirus","Rotavirus","Parvovirus",
+            "Enterovirus","Astrovirus","Poliovirus",
+            "Sapovirus","Adenovirus","Morbillivirus",
+            "Unclassified")
+
+#pivoting data for long form
+kraken_long <- most_recent_kraken %>%
+  pivot_longer(
+    cols = c(Norovirus:Unclassified_detected),  
+    names_to = c("organism", ".value"),         
+    names_pattern = "^(.*)_(pct|detected)$",    
+    values_drop_na = TRUE                       
+  ) %>%
+  rename(percent = pct) %>%                     
+  select(SRA.accession, organism, percent, detected, everything())
+
+#write temp kraken file and append to history file
+write.csv(kraken_long,"../dashboard/current_session_kraken.csv")
+history <- read.csv("../dashboard/kraken_history.csv")
+
+history %>%
+  full_join(kraken_long) %>%
+  unique.array()
+
+write.csv(history,"../dashboard/kraken_history.csv")
+
+#TODO: get kraken_long to contain counts so it can be assigned to the kraken_summary variable. 
   kraken_summary <- read.csv("../results/summary/kraken_summary-2026-04-28.csv")
   
   ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
@@ -157,6 +184,9 @@ output$map <- renderLeaflet({
       radius = ~count.y * 15, group = ~scientific_name, clusterOptions = markerClusterOptions())
        })
   
+  output$data <- 
+    renderDataTable({datatable(summary_data)}) 
+
   
 }
 

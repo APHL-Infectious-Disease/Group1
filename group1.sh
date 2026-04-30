@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nextflow run . -profile singularity -resume
+nextflow run . -profile singularity -resume --kraken2_db assets/kraken2db_v2/
 
 rm -r -d ./work/*
 
