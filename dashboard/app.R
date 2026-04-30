@@ -30,7 +30,8 @@ ui <- fluidPage(
 
   #UI input - sliders (date), button, arranging. - V 
   
-  # Sidebar with a slider input for number of bins 
+  
+  # Sidebar for barplot aesthetics
   sidebarLayout(
     sidebarPanel(
       selectInput("y_var",
@@ -38,13 +39,13 @@ ui <- fluidPage(
                   choices = c("count", "percent")),
       selectInput("x_var",
                   "Group By:",
-                  choices = c("scientific_name", "sample_srx", "location", "year")),
+                  choices = c("scientific_name", "sample_srx")),
       selectInput("fill_var",
                   "Color By:",
                   choices = c("scientific_name", "sample_srx", "location", "year"))
     ),
     
-    # Show a plot of the generated distribution
+    # Add pannels
     mainPanel(
       tabsetPanel(
         tabPanel("Bar Plot", plotOutput("barPlot")),
@@ -53,27 +54,32 @@ ui <- fluidPage(
         tabPanel("Organism Location", plotOutput("org_locale")),
         tabPanel("Map", leafletOutput("map"))
       )))
-    
+
+
 )
 
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output) {
   #themer
   bs_themer()
 
 
-  # Load data - pull most recent date
+  # Load data
+  
+  ### Kraken summary file based on most recent date in file name
   most_recent_kraken <- list.files("../results/summary/", full.names = TRUE) %>% 
   sort(decreasing = TRUE) %>% 
   first()
   
   kraken_summary <- read.csv("../results/summary/kraken_summary-2026-04-28.csv")
   
+  ### Metadata from SRA data pull
   ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
   colnames(ww_metadata) <- c("sample_srx","library_strategy","library_selection","run_taxon_id","run_scientific_name", "collection_date", "location", "lat_lon")
 
+  ### Combine Kraken & metadata
   summary_data <- kraken_summary %>%
-    left_join(ww_metadata, by = c("sample_srx" = "sample_srx")) %>%
+    left_join(ww_metadata, by = "sample_srx") %>%
     mutate(
       country = str_extract(location, "^[^:]+"),
       place = str_extract(location, "(?<=:).*"),
@@ -81,17 +87,34 @@ server <- function(input, output) {
       year = as.character(year(as.Date(collection_date)))
     )
   
+
+  # Generate barplot
   output$barPlot <- renderPlot({
     
     summary_data %>%
       # Drop unclassified from results
       filter(scientific_name != "unclassified") %>%
       ggplot() +
-      geom_bar(aes_string(x = input$x_var, y=input$y_var, fill = input$fill_var), stat = "identity") +
+      stat_summary(fun = mean, geom = "col", aes_string(x = input$x_var, y = input$y_var, fill = input$fill_var)) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs( )
   })
   
+
+
+# Time trends
+  output$timePlot <- renderPlot({
+
+    summary_data %>%
+      # Drop unclassified from results
+      filter(scientific_name != "unclassified") %>%
+      ggplot() + 
+      geom_point(aes_string(x = "collection_date", y = input$y_var, color = "scientific_name")) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs( )
+  })
+
+
   #import data and transform - Script from Hanley
   # tabulated data - data table on a tab
   # ggplot - taxon breakdown by state AND National, and frequency
