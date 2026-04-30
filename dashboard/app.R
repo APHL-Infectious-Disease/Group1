@@ -16,12 +16,8 @@ library(bslib)
 library(leaflet)
 library(DT)
 
+
 thematic::thematic_shiny(font = "auto")
-
-
-# Summarize data
-try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
-
 # setup fonts
 
 # Define UI for application that draws a barplot
@@ -84,8 +80,11 @@ server <- function(input, output) {
 
 
   # Load data
+
+  ### Generate combined Kraken summary file
+  try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
   
-  ### Kraken summary file based on most recent date in file name
+  ### Load Kraken summary file based on most recent date in file name
   most_recent_kraken <- list.files("../results/summary/", full.names = TRUE) %>% 
   sort(decreasing = TRUE) %>% 
   first()
