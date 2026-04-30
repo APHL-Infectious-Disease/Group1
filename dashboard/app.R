@@ -30,32 +30,44 @@ ui <- fluidPage(
 
   #UI input - sliders (date), button, arranging. - V 
   
-  
-  # Sidebar for barplot aesthetics
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("y_var",
-                  "Summarize Average Read:",
-                  choices = c("count", "percent")),
-      selectInput("x_var",
-                  "Group By:",
-                  choices = c("scientific_name", "sample_srx")),
-      selectInput("fill_var",
-                  "Color By:",
-                  choices = c("scientific_name", "sample_srx", "location", "year"))
-    ),
+  tabsetPanel(
     
-    # Add pannels
-    mainPanel(
-      tabsetPanel(
-        tabPanel("Bar Plot", plotOutput("barPlot")),
-        tabPanel("Organism Frequency", plotOutput("org_freq")),
-        tabPanel("Organism Percent", plotOutput("org_percent")),
-        tabPanel("Organism Location", plotOutput("org_locale")),
-        tabPanel("Map", leafletOutput("map"))
-      )))
+    # barplot tab
+    tabPanel("Bar Plot",
+    # Set up sidebar
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("y_var",
+                    "Summarize Average Read:",
+                    choices = c("count", "percent")),
+        selectInput("x_var",
+                    "Group By:",
+                    choices = c("scientific_name", "sample_srx")),
+        selectInput("fill_var",
+                    "Color By:",
+                    choices = c("scientific_name", "sample_srx", "location", "year"))
+                    ),
+        mainPanel(plotOutput("barPlot"))
+    )),
+    
+    # Timeplot
+    tabPanel("Time Plot",
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("y_var2",
+                    "Summarize Average Read:",
+                    choices = c("count", "percent"))
+      ),
+      mainPanel(plotOutput("timePlot"))
+    )),
 
+    # Additional tabs
+    tabPanel("Organism Frequency", plotOutput("org_freq")),
+    tabPanel("Organism Percent", plotOutput("org_percent")),
+    tabPanel("Organism Location", plotOutput("org_locale")),
+    tabPanel("Map", leafletOutput("map"))
 
+    )
 )
 
 # Define server logic
@@ -109,7 +121,7 @@ server <- function(input, output) {
       # Drop unclassified from results
       filter(scientific_name != "unclassified") %>%
       ggplot() + 
-      geom_point(aes_string(x = "collection_date", y = input$y_var, color = "scientific_name")) +
+      geom_point(aes_string(x = "collection_date", y = input$y_var2, color = "scientific_name")) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs( )
   })
