@@ -14,6 +14,7 @@ library(ggplot2)
 library(readr)
 library(bslib)
 library(leaflet)
+library(thematic)
 thematic::thematic_shiny(font = "auto")
 # setup fonts
 
@@ -33,14 +34,14 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("y_var",
-                  "Y:",
+                  "Summarize Average Read:",
                   choices = c("count", "percent")),
       selectInput("x_var",
                   "Group By:",
-                  choices = c("scientific_name", "sample_srx", "year")),
+                  choices = c("scientific_name", "sample_srx", "location", "year")),
       selectInput("fill_var",
                   "Color By:",
-                  choices = c("scientific_name", "sample_srx", "year"))
+                  choices = c("scientific_name", "sample_srx", "location", "year"))
     ),
     
     # Show a plot of the generated distribution
@@ -62,7 +63,7 @@ server <- function(input, output) {
 
 
   # Load data - pull most recent date
-  most_recent_kraken <- list.files("../results/summary/*", full.names = TRUE) %>% 
+  most_recent_kraken <- list.files("../results/summary/", full.names = TRUE) %>% 
   sort(decreasing = TRUE) %>% 
   first()
   
@@ -73,15 +74,17 @@ server <- function(input, output) {
 
   summary_data <- kraken_summary %>%
     left_join(ww_metadata, by = c("sample_srx" = "sample_srx")) %>%
-    mutate(country = str_extract(location, "^[^:]+")) %>%
-    mutate(place = str_extract(location, "(?<=:).*"))  
+    mutate(
+      country = str_extract(location, "^[^:]+"),
+      place = str_extract(location, "(?<=:).*"),
+      collection_date = as.Date(collection_date, format = "%Y-%m-%d"),
+      year = as.character(year(as.Date(collection_date)))
+    )
   
   output$barPlot <- renderPlot({
     
-    # draw the histogram with the specified number of bins
-    kraken_summary %>%
+    summary_data %>%
       # Drop unclassified from results
-      mutate(year = year(as.Date(summary_date))) %>% #using summary date just to test, but this needs to be changed to the collection date from the metadata
       filter(scientific_name != "unclassified") %>%
       ggplot() +
       geom_bar(aes_string(x = input$x_var, y=input$y_var, fill = input$fill_var), stat = "identity") +
@@ -93,7 +96,7 @@ server <- function(input, output) {
   # tabulated data - data table on a tab
   # ggplot - taxon breakdown by state AND National, and frequency
   # ggplot - time bound
-  # need to add metadata - IMPORTANT - year is currently the year summary was made - needs to be changed to collection year from metadata
+
 summaryfile <- summary_data 
 ##initial file read in - no metadata attached
 
