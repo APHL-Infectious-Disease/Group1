@@ -207,8 +207,10 @@
             "default": 1000
         },
         "max_sra_mb": {
-            "type": "integer",
-            "default": 500
+            "type": ["integer", "string"],
+            "default": 500,
+            "pattern": "^[0-9]+$",
+            "description": "Maximum SRA run size in MB. Runs larger than this are excluded."
         }
     }
 }
