@@ -9,7 +9,7 @@ library("tidyverse")
 
 
 # Read in Kraken report & add SRX id (should this be SRA?) as a column
-kraken_reports_files <- list.files("results/kraken2", full.names = TRUE)
+kraken_reports_files <- list.files("../results/kraken2", full.names = TRUE)
 
 kraken_reports <- bind_rows(lapply(kraken_reports_files, function(x) {
   read.delim2(x, header = FALSE) %>%
@@ -24,7 +24,7 @@ colnames(kraken_reports) <- c("percent", "count", "count_taxon_exclusive", "rank
   
 
 # pull taxa id's from map file
-ref_tax_ids <- read.delim("assets//kraken2db_v2//seqid2taxid.map", header = FALSE) %>% pull(V2)
+ref_tax_ids <- read.delim("..//assets//kraken2db_v2//seqid2taxid.map", header = FALSE) %>% pull(V2)
 
 
 # Filter kraken_reports
@@ -44,10 +44,10 @@ kraken_comb_wide <- kraken_comb  %>%
     values_from = "count")
 
 # save files
-if (!dir.exists("./results/summary")) {
-  dir.create("./results/summary", recursive = TRUE)
+if (!dir.exists("..//results//summary")) {
+  dir.create("..//results//summary", recursive = TRUE)
 }
 
-write.csv(kraken_comb, paste0("./results/summary/kraken_summary-", Sys.Date(), ".csv"), row.names = FALSE)
+write.csv(kraken_comb, paste0("..//results/summary//kraken_summary-", Sys.Date(), ".csv"), row.names = FALSE)
 
-write.csv(kraken_comb_wide, paste0("./results/summary/kraken_summary_wide_format-", Sys.Date(), ".csv"), row.names = FALSE)
+write.csv(kraken_comb_wide, paste0("..//results//summary//kraken_summary_wide_format-", Sys.Date(), ".csv"), row.names = FALSE)

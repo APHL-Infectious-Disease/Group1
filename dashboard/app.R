@@ -15,7 +15,13 @@ library(readr)
 library(bslib)
 library(leaflet)
 library(DT)
+
 thematic::thematic_shiny(font = "auto")
+
+
+# Summarize data
+try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
+
 # setup fonts
 
 # Define UI for application that draws a barplot
