@@ -2,10 +2,9 @@
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
-# Find out more about building applications with Shiny here:
-#
-#    https://shiny.posit.co/
-#
+# Before running this script for the frist time, it may be necissary to run in the terminal:
+# conda install -c conda-forge r-base
+# conda install -c conda-forge r-tidyverse r-shiny r-leaflet r-thematic r-DT
 
 library(shiny)
 library(htmltools)
@@ -15,9 +14,43 @@ library(readr)
 library(bslib)
 library(leaflet)
 library(DT)
+library(scales)
+
 
 thematic::thematic_shiny(font = "auto")
 # setup fonts
+
+
+
+
+  # Load data
+
+  ### Generate combined Kraken summary file
+  try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
+  
+  ### Load Kraken summary file based on most recent date in file name
+  most_recent_kraken <- list.files("../results/summary/", full.names = TRUE, pattern = "kraken_summary-") %>% 
+  sort(decreasing = TRUE) %>% 
+  first()
+  
+  kraken_summary <- read.csv(most_recent_kraken)
+  
+  ### Metadata from SRA data pull
+  ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
+  colnames(ww_metadata) <- c("sample_srx","library_strategy","library_selection","run_taxon_id","run_scientific_name", "collection_date", "location", "lat_lon")
+
+  ### Combine Kraken & metadata
+  summary_data <- kraken_summary %>%
+    left_join(ww_metadata, by = "sample_srx") %>%
+    mutate(
+      country = str_extract(location, "^[^:]+"),
+      place = str_extract(location, "(?<=:).*"),
+      collection_date = as.Date(collection_date, format = "%Y-%m-%d"),
+      year = as.character(year(as.Date(collection_date)))
+    )
+  
+
+
 
 # Define UI for application that draws a barplot
 ui <- fluidPage(
@@ -30,122 +63,106 @@ ui <- fluidPage(
   
 
   #UI input - sliders (date), button, arranging. - V 
-  
-  # Sidebar with a slider input for number of bins 
-  sidebarLayout(
-    sidebarPanel(
-      selectInput("y_var",
-                  "Y:",
-                  choices = c("count", "percent")),
-      selectInput("x_var",
-                  "Group By:",
-                  choices = c("scientific_name", "sample_srx", "year")),
-      selectInput("fill_var",
-                  "Color By:",
-                  choices = c("scientific_name", "sample_srx", "year"))
-    ),
+ 
+  tabsetPanel(
     
-    # Show a plot of the generated distribution
-    mainPanel(
-      tabsetPanel(
-        tabPanel("Bar Plot", plotOutput("barPlot")),
-        tabPanel("Organism Frequency", plotOutput("org_freq")),
-        tabPanel("Organism Percent", plotOutput("org_percent")),
-        tabPanel("Organism Location", plotOutput("org_locale")),
-        tabPanel("Map", leafletOutput("map")),
-        tabPanel("Data", dataTableOutput("data"))
-      )))
+    # primary tab
+    tabPanel("Primary Summary",
+      fluidRow(
+        h3("Enteric Viruses in Metagenomic Wastewater Samples", align = "center"),
+        column(width = 6, plotOutput("org_freq")),
+        column(width = 6, plotOutput("org_percent")),
+        column(width = 6, plotOutput("org_locale")),
+        column(width = 6, plotOutput("unique_viruses"))
+    )),
+
+    # barplot tab
+    tabPanel("Barplot",
+    # Set up sidebar
+    sidebarLayout(
+      sidebarPanel(
+        selectInput("y_var",
+                    "Summarize Average Read:",
+                    choices = c("count", "percentage_in_sample")),
+        selectInput("x_var",
+                    "Group By:",
+                    choices = c("scientific_name", "sample_srx")),
+        selectInput("fill_var",
+                    "Color By:",
+                    choices = c("scientific_name", "sample_srx", "location", "year", "library_selection"))
+                    ),
+        mainPanel(plotOutput("barPlot"))
+    )),
     
+    # Additional tabs
+    tabPanel("Map", leafletOutput("map")),
+    tabPanel("Data", dataTableOutput("data"))
+
+    )
 )
 
-# Define server logic required to draw a histogram
+# Define server logic
 server <- function(input, output) {
   #themer
   bs_themer()
 
 
-  # Load data - pull most recent file
-  most_recent_kraken <- read.csv("/workspaces/Group1/results/postkraken/metadata_postkraken.csv")
-  bugs <- c("Norovirus","Rotavirus","Parvovirus",
-            "Enterovirus","Astrovirus","Poliovirus",
-            "Sapovirus","Adenovirus","Morbillivirus",
-            "Unclassified")
-
-#pivoting data for long form
-kraken_long <- most_recent_kraken %>%
-  pivot_longer(
-    cols = c(Norovirus:Unclassified_detected),  
-    names_to = c("organism", ".value"),         
-    names_pattern = "^(.*)_(pct|detected)$",    
-    values_drop_na = TRUE                       
-  ) %>%
-  rename(percent = pct) %>%                     
-  select(SRA.accession, organism, percent, detected, everything())
-
-#write temp kraken file and append to history file
-write.csv(kraken_long,"../dashboard/current_session_kraken.csv")
-history <- read.csv("../dashboard/kraken_history.csv")
-
-history %>%
-  full_join(kraken_long) %>%
-  unique.array()
-
-write.csv(history,"../dashboard/kraken_history.csv")
-
-#TODO: get kraken_long to contain counts so it can be assigned to the kraken_summary variable. 
-  kraken_summary <- read.csv("../results/summary/kraken_summary-2026-04-28.csv")
-  
-  ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
-  colnames(ww_metadata) <- c("sample_srx","library_strategy","library_selection","run_taxon_id","run_scientific_name", "collection_date", "location", "lat_lon")
-
-  summary_data <- kraken_summary %>%
-    left_join(ww_metadata, by = c("sample_srx" = "sample_srx")) %>%
-    mutate(country = str_extract(location, "^[^:]+")) %>%
-    mutate(place = str_extract(location, "(?<=:).*"))  
-  
+  # Generate barplot
   output$barPlot <- renderPlot({
     
-    # draw the histogram with the specified number of bins
-    kraken_summary %>%
+    summary_data %>%
+      # Rename variables
+      mutate(
+        `percentage_in_sample` = percent
+      ) %>%
       # Drop unclassified from results
-      mutate(year = year(as.Date(summary_date))) %>% #using summary date just to test, but this needs to be changed to the collection date from the metadata
       filter(scientific_name != "unclassified") %>%
       ggplot() +
-      geom_bar(aes_string(x = input$x_var, y=input$y_var, fill = input$fill_var), stat = "identity") +
+      stat_summary(fun = mean, geom = "col", position = "dodge",
+      aes_string(x = input$x_var, y = input$y_var, fill = input$fill_var)) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
       labs( )
   })
   
-  #import data and transform - Script from Hanley
-  # tabulated data - data table on a tab
-  # ggplot - taxon breakdown by state AND National, and frequency
-  # ggplot - time bound
-  # need to add metadata - IMPORTANT - year is currently the year summary was made - needs to be changed to collection year from metadata
-summaryfile <- summary_data 
-##initial file read in - no metadata attached
 
-summary_oi <- summaryfile[summaryfile$scientific_name != "unclassified", ] ##subset to exclude unclassified
+summary_oi <- summary_data[summary_data$scientific_name != "unclassified", ] ##subset to exclude unclassified
 
 output$org_freq <- renderPlot({
-  ggplot(summary_oi, aes(y=scientific_name, fill=scientific_name )) + 
-  geom_bar( ) +
-  scale_fill_hue(c = 40) +
-  theme(legend.position="none") + labs(title = "Count of organisms found in wastewater", x="Number of organisms", y="Organism")  
+  ggplot(summary_oi, aes(x=count, y=scientific_name, fill=scientific_name)) + 
+  geom_boxplot( ) +
+  geom_boxplot(color = "salmon") +
+  scale_fill_hue(c = 40) + 
+  theme(legend.position="none") +
+  labs(title = "Count of organisms found in wastewater", x="Number of organisms (reads)", y="Organism")  
   ##bar chart to number organisms by scientific name
 })
 output$org_percent <- renderPlot({
-  ggplot(summary_oi, aes(x=percent, y=scientific_name)) +
-  geom_line( color= "salmon", linetype=1, size = 5) +
-  labs(title="Percentage of Organisms in Wastewater", x="Percentage") 
+  ggplot(summary_oi, aes(x=percent, y=scientific_name, fill=scientific_name)) +
+  geom_boxplot(color = "salmon") +
+  scale_fill_hue(c = 40) +
+  scale_x_continuous(labels = label_number()) +
+  theme(legend.position="none") +
+  labs(title="Percentage of Organisms in Wastewater (axis is not to 100!)", x="Percentage in sample") 
   ##bar chart for percent of organisms by scientific name (without unclassified)
 })
 output$org_locale <- renderPlot({
-  ggplot(summary_oi, aes(x = location)) +
+  ggplot(summary_oi %>% mutate(location = ifelse(location == "", "unknown", location)), aes(x = location)) +
   geom_bar(fill = "salmon") +
-  labs(title = "Organisms by Location", y = "Number of Organisms") 
-   ##bar chart by location - should work if column name in Toms sheet is location lol
+  labs(title = "Sample Locations", y = "Number of Samples") 
 })
-  
+output$unique_viruses <- renderPlot({
+  summary_data %>%
+  group_by(sample_srx) %>%
+  reframe(unique_pathogens = n()-1) %>%
+  ggplot(aes(x = unique_pathogens)) +
+  geom_histogram(fill = "salmon", binwidth = 1) +
+  scale_x_continuous(breaks = seq(0, 15, by = 1)) +
+  labs(
+    title = "Total Unique Enteric Viruses Identified per Sample",
+    x = "unique enteric viruses in sample",
+    y = "Total Samples") 
+})
+
   
   
   # mapping - Leaflet map. V 
@@ -183,10 +200,8 @@ output$map <- renderLeaflet({
       fillOpacity = 0.4, 
       radius = ~count.y * 15, group = ~scientific_name, clusterOptions = markerClusterOptions())
        })
-  
-  output$data <- 
-    renderDataTable({datatable(summary_data)}) 
-
+output$data <- 
+  renderDataTable({datatable(summary_data)})   
   
 }
 

@@ -151,7 +151,18 @@ SRA / Accessions / Samplesheet
 - Generates MultiQC report  
 
 ### RESULTS DASHBOARD
-- 
+```bash
+bash shiny.sh
+```
+- shiny.sh launches app.R, which combines and saves kraken files as a single summary file and generates an associated dashboard from the kraken summary file and SRA metadata file 
+- This should automatically open the associated dashboard html. If not, got to Ports, select 8080 and click "open in browser" (the globe icon)
+
+In a new codespace, it may be necissary to first run the following commands in the terminal:
+```bash
+conda install -c conda-forge r-base
+conda install -c conda-forge r-tidyverse r-shiny r-leaflet r-thematic r-DT
+```
+
 
 ---
 
