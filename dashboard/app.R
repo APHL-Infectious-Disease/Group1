@@ -20,6 +20,38 @@ library(DT)
 thematic::thematic_shiny(font = "auto")
 # setup fonts
 
+
+
+
+  # Load data
+
+  ### Generate combined Kraken summary file
+  try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
+  
+  ### Load Kraken summary file based on most recent date in file name
+  most_recent_kraken <- list.files("../results/summary/", full.names = TRUE) %>% 
+  sort(decreasing = TRUE) %>% 
+  first()
+  
+  kraken_summary <- read.csv("../results/summary/kraken_summary-2026-04-28.csv")
+  
+  ### Metadata from SRA data pull
+  ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
+  colnames(ww_metadata) <- c("sample_srx","library_strategy","library_selection","run_taxon_id","run_scientific_name", "collection_date", "location", "lat_lon")
+
+  ### Combine Kraken & metadata
+  summary_data <- kraken_summary %>%
+    left_join(ww_metadata, by = "sample_srx") %>%
+    mutate(
+      country = str_extract(location, "^[^:]+"),
+      place = str_extract(location, "(?<=:).*"),
+      collection_date = as.Date(collection_date, format = "%Y-%m-%d"),
+      year = as.character(year(as.Date(collection_date)))
+    )
+  
+
+
+
 # Define UI for application that draws a barplot
 ui <- fluidPage(
   
@@ -31,12 +63,13 @@ ui <- fluidPage(
   
 
   #UI input - sliders (date), button, arranging. - V 
-  
+ 
   tabsetPanel(
     
     # primary tab
-    tabPanel("Main",
+    tabPanel("Primary Summary",
       fluidRow(
+        h3("Enteric Viruses in Metagenomic Wastewater Samples", align = "center"),
         column(width = 6, plotOutput("org_freq")),
         column(width = 6, plotOutput("org_percent")),
         column(width = 6, plotOutput("org_locale"))
@@ -72,33 +105,6 @@ server <- function(input, output) {
   #themer
   bs_themer()
 
-
-  # Load data
-
-  ### Generate combined Kraken summary file
-  try(source("../dashboard/summarize_kraken_output.R", chdir = TRUE))
-  
-  ### Load Kraken summary file based on most recent date in file name
-  most_recent_kraken <- list.files("../results/summary/", full.names = TRUE) %>% 
-  sort(decreasing = TRUE) %>% 
-  first()
-  
-  kraken_summary <- read.csv("../results/summary/kraken_summary-2026-04-28.csv")
-  
-  ### Metadata from SRA data pull
-  ww_metadata <- read.csv("../results/sra/sra_meta.tsv", sep = "\t")
-  colnames(ww_metadata) <- c("sample_srx","library_strategy","library_selection","run_taxon_id","run_scientific_name", "collection_date", "location", "lat_lon")
-
-  ### Combine Kraken & metadata
-  summary_data <- kraken_summary %>%
-    left_join(ww_metadata, by = "sample_srx") %>%
-    mutate(
-      country = str_extract(location, "^[^:]+"),
-      place = str_extract(location, "(?<=:).*"),
-      collection_date = as.Date(collection_date, format = "%Y-%m-%d"),
-      year = as.character(year(as.Date(collection_date)))
-    )
-  
 
   # Generate barplot
   output$barPlot <- renderPlot({
